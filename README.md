@@ -1,4 +1,4 @@
-# vst3_list
+# vst3-list
 A script to list the vst3 (and vst) plugins inside the main folder. Just to keep everything organized.
 
 The only things that you have to do are: giving the main folder path, where all the plugins are stored; giving the path where you want to save output .csv files.
