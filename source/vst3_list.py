@@ -9,7 +9,7 @@ Created on Sun Oct 22 13:19:47 2023
 import pandas as pd
 import os
 from os.path import join, basename, splitext, commonpath, relpath
-from pathlib import PurePath
+# from pathlib import PurePath
 
 ####~ Constants ~##############################################################
 VST3_EXTENSIONS = ['.vst3', '.dll']
@@ -32,19 +32,20 @@ def is_subpath(parent_path, child_path):
     """
     Detect if a certain path is a subpath of another.
     """
-    parent = PurePath(parent_path)
-    child = PurePath(child_path)
-    try:
-        child.relative_to(parent)
-        return True
-    except ValueError:
-        return False
+    return child_path.startswith(tuple(parent_path))
+    # parent = PurePath(parent_path) # slower alternative
+    # child = PurePath(child_path)
+    # try:
+    #     child.relative_to(parent)
+    #     return True
+    # except ValueError:
+    #     return False
 
 def list_files_and_dirs(path_start):
     """
     Lists all files and directories in the given path, excluding certain extensions.
     """
-    list_sub_pths, list_files = [], []
+    list_sub_pths, list_files = [], []  # Use a set for faster lookups
     for root, dirs, files in os.walk(path_start):
         for dir in dirs:
             path_dir = join(root, dir)
@@ -58,9 +59,9 @@ def list_files_and_dirs(path_start):
             _, file_ext, _, _ = filepathinfo(path_file, path_start)
             if file_ext in EXCLUDED_EXTENSIONS:
                 continue
-            else: # only add files that are not inside .vst3 folder
-                # if not any([y in [commonpath([path_file, x]) for x in list_files] for y in list_files]):
-                if not any([is_subpath(x, path_file) for x in list_files]):
+            else:
+                # Check if the file is not inside any .vst3 folder
+                if not is_subpath(list_files, path_file):
                     list_files.append(path_file)
     return list_files, list_sub_pths
 
@@ -104,8 +105,8 @@ def save_to_csv(vst3_data, path_rprt):
     path_chck = join(path_rprt, 'VST3_2Check.csv')
 
     vst3_df = pd.DataFrame.from_dict(vst3_data, orient='index').transpose()
-    vst3_df.to_csv(path_or_buf=path_sprd, columns=[UNKNOWN_LABEL, NOT_RECOGNIZED_LABEL], index=False)
-    vst3_df.to_csv(path_or_buf=path_chck, columns=[col for col in vst3_df.columns if col not in [UNKNOWN_LABEL, NOT_RECOGNIZED_LABEL]], index=False)
+    vst3_df.to_csv(path_or_buf=path_sprd, columns=[col for col in vst3_df.columns if col not in [UNKNOWN_LABEL, NOT_RECOGNIZED_LABEL]], index=False)
+    vst3_df.to_csv(path_or_buf=path_chck, columns=[UNKNOWN_LABEL, NOT_RECOGNIZED_LABEL], index=False)
 
 ####~ Core ~###################################################################
 if __name__ == "__main__":
