@@ -1,0 +1,22 @@
+First, my friend, you have to open a terminal window (powershell) and navigate to the location of the project.
+Remember, these command are tested with windows, if you are on Linux or macos, please replace \ with /.
+For instance, in my case I have:
+
+cd C:\Users\[my_username]\Documents\GitHub\vst3-list
+
+Then, you may use different commands, like the ones below.
+
+------------------------------------------------
+Compile rc icon (windres, from MiniGW), needed if you want the icon with exe compiled from cpp:
+
+windres "${pwd}\assets\resources.rc" -o "${pwd}\assets\resources.o"
+
+------------------------------------------------
+Compile static exe, python version (pyinstaller lib):
+
+pyinstaller --onefile --icon="${pwd}\assets\synthesizer.ico" "${pwd}\source\vst3_list.py"
+
+------------------------------------------------
+Compile static exe, cpp version (g++) (remove assets\resources.o if you don't want icon):
+
+g++ -static -o "${pwd}\vst3_list.exe" "${pwd}\source\vst3_list.cpp" "${pwd}\assets\resources.o" -lstdc++fs
