@@ -1,1 +1,5 @@
-vst3_list.exe
+vst3-list*.exe
+VST3_2Check.csv
+VST3_List.csv
+.vscode
+source/bin

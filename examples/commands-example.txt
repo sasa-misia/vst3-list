@@ -14,9 +14,9 @@ windres "${pwd}\assets\resources.rc" -o "${pwd}\assets\resources.o"
 ------------------------------------------------
 Compile static exe, python version (pyinstaller lib):
 
-pyinstaller --onefile --icon="${pwd}\assets\synthesizer.ico" "${pwd}\source\vst3_list.py"
+pyinstaller --onefile --icon="${pwd}\assets\synthesizer.ico" "${pwd}\source\vst3-list.py"
 
 ------------------------------------------------
 Compile static exe, cpp version (g++) (remove assets\resources.o if you don't want icon):
 
-g++ -static -o "${pwd}\vst3_list.exe" "${pwd}\source\vst3_list.cpp" "${pwd}\assets\resources.o" -lstdc++fs
+g++ -static -o "${pwd}\vst3-list-win64.exe" "${pwd}\source\vst3-list.cpp" "${pwd}\assets\resources.o" -lstdc++fs

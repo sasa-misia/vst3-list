@@ -188,6 +188,9 @@ private:
                             listFiles.push_back(entryPath);
                         }
                     }
+                } else if (entry.is_symlink()) {
+                    // Handle symbolic links: add the name of the link
+                    listFiles.push_back(entryPath + " -> " + fs::read_symlink(entry.path()).string());
                 }
             }
         } catch (const fs::filesystem_error& e) {
@@ -383,10 +386,18 @@ int main() {
         std::string pathVst3, pathRprt;
         
         // Get VST3 folder path from user or use default
-        std::cout << "VST3 folder ([C:\\Program Files\\Common Files\\VST3]): ";
+        #ifdef _WIN32
+        const std::string DEFAULT_VST3_PATH = "C:\\Program Files\\Common Files\\VST3";
+        #elif __APPLE__
+        const std::string DEFAULT_VST3_PATH = "/Library/Audio/Plug-Ins/VST3";
+        #else
+        const std::string DEFAULT_VST3_PATH = "/usr/lib/vst3";
+        #endif
+
+        std::cout << "VST3 folder ([" << DEFAULT_VST3_PATH << "]): ";
         std::getline(std::cin, pathVst3);
         if (pathVst3.empty()) {
-            pathVst3 = "C:\\Program Files\\Common Files\\VST3";
+            pathVst3 = DEFAULT_VST3_PATH;
         }
         
         // Get report folder path from user or use current directory
@@ -401,10 +412,18 @@ int main() {
         lister.process(pathVst3, pathRprt);
         
         std::cout << "VST3 list generated successfully!" << std::endl;
+
+        std::cout << "Press Enter to exit...";
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
         return 0;
         
     } catch (const std::exception& e) {
         std::cerr << "Error: " << e.what() << std::endl;
+
+        std::cout << "Press Enter to exit...";
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
         return 1;
     }
 }
